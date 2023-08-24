@@ -3,6 +3,8 @@
 #include <ctime>    
 #include <string>
 #include <stdio.h>
+#include <vector>
+
 std::time_t getTime() {
     auto start = std::chrono::system_clock::now();
  
@@ -31,9 +33,28 @@ std::string getOsName()
     #endif
 }
 
+std::vector<std::string> getLinuxLogo() {
+    return {
+        "           __      ",
+        "             -=(o '.    ",
+        "                '.-.\\   ",
+        "                /|  \\  ",
+        "                '|  ||  ",
+        "       snd       _\\_):,_"
+    };
+}
+
+
 int main() {
     std::time_t time = getTime();
     std::cout << std::ctime(&time);
     std::cout << getOsName();
+    std::vector<std::string> logo = getLinuxLogo();
+    for(std::string s : logo) {
+        for(char c : s) {
+            std::cout << c;
+        }
+        std::cout << "\n";
+    }
     return 0;
 }
