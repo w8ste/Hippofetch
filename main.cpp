@@ -83,18 +83,25 @@ int main() {
     //std::string os = getOsName();
     utsname u; 
     u = getDistro();
-    std::cout << "sysname " << u.sysname << '\n'
-              << "nodename " << u.nodename << '\n'
-              << "release " << u.release << '\n'
-              << "version " << u.version << '\n'
-              << "maschine " << u.machine << '\n'
-              << '\n'; 
+    
+    std::string infoArr[3];
+    infoArr[0] = u.sysname;
+    infoArr[0].append("  ").append(u.machine);
+    infoArr[1] = u.nodename;
+    infoArr[2] = u.release;
+    
+    int counter = 0;
     std::vector<std::string> logo = getHippo();
     for(std::string s : logo) {
         for(char c : s) {
             std::cout << c;
         }
-        std::cout << "\n";
+        std::string info = ((counter < end(infoArr) - begin(infoArr)
+                            ? infoArr[counter] : ""));
+        std::cout << "      "
+                  << info
+                  << "\n";
+        counter++;
     } 
     return 0;
 }
