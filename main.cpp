@@ -86,8 +86,8 @@ int main() {
     
     std::string infoArr[3];
     infoArr[0] = u.sysname;
-    infoArr[0].append("  ").append(u.machine);
     infoArr[1] = u.nodename;
+    infoArr[1].append("  ").append(u.machine);
     infoArr[2] = u.release;
     
     int counter = 0;
