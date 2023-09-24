@@ -1,20 +1,40 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>    
+#include <mutex>
 #include <string>
 #include <stdio.h>
 #include <vector>
 #include <sys/utsname.h>
 #include <vector>
 #include <cctype>
+#include <unistd.h>
+
 std::time_t getTime() {
     auto start = std::chrono::system_clock::now();
  
     std::time_t time = std::chrono::system_clock::to_time_t(start);
      
     return time;
-    
 }
+
+std::string getUser() {
+    #ifdef _WIN32
+    #include<windows.h>
+    char username[UNLEN+1];
+    DWORD username_len = UNLEN+1;
+    return GetUserName(username, &username_len);
+    #elif _WIN64
+    char username[UNLEN+1];
+    DWORD username_len = UNLEN+1;
+    return GetUserName(username, &username_len);
+    #elif __linux__
+    return getlogin();
+    #endif
+    return 0;
+}
+
+
 std::string getOsName()
 {
     #ifdef _WIN32
@@ -84,11 +104,12 @@ int main() {
     utsname u; 
     u = getDistro();
     
-    std::string infoArr[3];
+    std::string infoArr[4];
     infoArr[0] = u.sysname;
     infoArr[1] = u.nodename;
     infoArr[1].append("  ").append(u.machine);
     infoArr[2] = u.release;
+    infoArr[3] = getUser();
     
     int counter = 0;
     std::vector<std::string> logo = getHippo();
