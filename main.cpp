@@ -1,11 +1,14 @@
+#include <cmath>
 #include <iostream>
 #include <chrono>
 #include <ctime>    
+#include <linux/sysinfo.h>
 #include <mutex>
 #include <string>
 #include <stdio.h>
 #include <vector>
 #include <sys/utsname.h>
+#include <sys/sysinfo.h>
 #include <vector>
 #include <cctype>
 #include <unistd.h>
@@ -96,21 +99,33 @@ utsname getDistro() {
    return result; 
 }
 
+std::string getUptime() {
+    struct sysinfo info;
+    sysinfo(&info);
+    double up = info.uptime / 3600.0;
+    int upHours = std::floor(info.uptime / 3600);
+    int upMinutes = (up - upHours) * 60;
+    return std::to_string(upHours).append(" hours, ")
+           .append(std::to_string(upMinutes).append(" minutes"));   
+}
+
 
 int main() {
     std::time_t time = getTime();
     std::cout << std::ctime(&time);
-    //std::string os = getOsName();
     utsname u; 
     u = getDistro();
     
     std::string infoArr[4];
-    infoArr[0] = u.sysname;
-    infoArr[1] = u.nodename;
-    infoArr[1].append("  ").append(u.machine);
-    infoArr[2] = u.release;
-    infoArr[3] = getUser();
-    
+    infoArr[0] = "OS: ";
+    infoArr[0].append(u.nodename).append(" ").append(u.machine);
+    infoArr[1] = "Kernel: ";
+    infoArr[1].append(u.release);
+    infoArr[2] = "User: ";
+    infoArr[2].append(getUser());
+    infoArr[3] = "Uptime: ";
+    infoArr[3].append(getUptime());
+
     int counter = 0;
     std::vector<std::string> logo = getHippo();
     for(std::string s : logo) {
