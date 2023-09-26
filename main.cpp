@@ -141,7 +141,7 @@ int main() {
     infoArr[3] = "Uptime: ";
     infoArr[3].append(getUptime());
 
-    std::vector<std::string> bubble = getBubble("hannes", "archlinux");
+    std::vector<std::string> bubble = getBubble(getUser(), u.nodename);
     int c = 0;
     for(std::string s : bubble) {
       for(char c : s) {
