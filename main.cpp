@@ -1,9 +1,12 @@
 #include <cmath>
+#include <ios>
 #include <iostream>
 #include <chrono>
 #include <ctime>    
+#include <limits>
 #include <linux/sysinfo.h>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <stdio.h>
 #include <vector>
@@ -15,9 +18,7 @@
 
 std::time_t getTime() {
     auto start = std::chrono::system_clock::now();
- 
     std::time_t time = std::chrono::system_clock::to_time_t(start);
-     
     return time;
 }
 
@@ -36,7 +37,6 @@ std::string getUser() {
     #endif
     return 0;
 }
-
 
 std::string getOsName()
 {
@@ -61,13 +61,12 @@ std::string getOsName()
 std::vector<std::string> getHippo() {
     std::vector<std::string> s;
     s= {
-        "     ,_,                ",
-        "    (0_0)_----------_   ",
-        "   (_____)           |~'",
-        "   `-\"-\"-'           /  ",
-        "     `|__|~-----~|__|   ",
-        "                        ",
-
+        "   \\     ,_,                ",
+        "    \\   (0_0)_----------_   ",
+        "       (_____)           |~'",
+        "       `-\"-\"-'           /  ",
+        "         `|__|~-----~|__|   ",
+        "                            ",
     };
     /*
     s = {
@@ -106,9 +105,25 @@ std::string getUptime() {
     int upHours = std::floor(info.uptime / 3600);
     int upMinutes = (up - upHours) * 60;
     return std::to_string(upHours).append(" hours, ")
-           .append(std::to_string(upMinutes).append(" minutes"));   
+           .append(std::to_string(upMinutes).append(" minutes"));
 }
 
+std::vector<std::string> getBubble(std::string user, std::string os) {
+  std::string mid = "< ";
+  mid.append(user.append("@").append(os).append(" >"));
+  std::string top = " ";
+  std::string bottom = " ";
+  for(int i = 0; i < mid.length() - 2; i++) {
+    top.append("_");
+    bottom.append("-");
+  }
+  std::vector<std::string> bubble = {
+    top,
+    mid,
+    bottom,
+  }; 
+  return bubble;
+}
 
 int main() {
     std::time_t time = getTime();
@@ -126,6 +141,14 @@ int main() {
     infoArr[3] = "Uptime: ";
     infoArr[3].append(getUptime());
 
+    std::vector<std::string> bubble = getBubble("hannes", "archlinux");
+    int c = 0;
+    for(std::string s : bubble) {
+      for(char c : s) {
+	std::cout << c ;
+      }
+      std::cout << "\n";
+    }
     int counter = 0;
     std::vector<std::string> logo = getHippo();
     for(std::string s : logo) {
