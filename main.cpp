@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdlib>
 #include <ios>
 #include <iostream>
 #include <chrono>
@@ -8,6 +9,7 @@
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <string.h>
 #include <stdio.h>
 #include <vector>
 #include <sys/utsname.h>
@@ -80,6 +82,16 @@ std::vector<std::string> getHippo() {
     return s;
 }
 
+std::string getPackageCount(char* distro) {
+
+    if (strcmp(distro, "archlinux") == 0) {
+      return std::to_string(system("pacman -Q | wc -l"));
+    } else {
+      std::cout << "no";
+    }
+    return " ";
+}
+
 // penguin ascii art
 std::vector<std::string> getLinuxLogo() {
     return {
@@ -130,7 +142,9 @@ int main() {
     std::cout << std::ctime(&time);
     utsname u; 
     u = getDistro();
-    
+
+    //testing
+    getPackageCount(u.nodename);
     std::string infoArr[4];
     infoArr[0] = "OS: ";
     infoArr[0].append(u.nodename).append(" ").append(u.machine);
