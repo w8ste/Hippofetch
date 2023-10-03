@@ -24,11 +24,6 @@
 
 using namespace std;
 
-time_t getTime() {
-    auto start = chrono::system_clock::now();
-    time_t time = std::chrono::system_clock::to_time_t(start);
-    return time;
-}
 
 string getUser() {
     #ifdef _WIN32
@@ -88,6 +83,35 @@ vector<std::string> getHippo() {
     return s;
 }
 
+// penguin ascii art
+vector<std::string> getLinuxLogo() {
+    return {
+        "           __      ",
+        "             -=(o '.    ",
+        "                '.-.\\   ",
+        "                /|  \\  ",
+        "                '|  ||  ",
+        "       snd       _\\_):,_",
+    };
+}
+
+vector<string> getBubble(string user, string os) {
+  string mid = "< ";
+  mid.append(user.append("@").append(os).append(" >"));
+  string top = " ";
+  string bottom = " ";
+  for(int i = 0; i < mid.length() - 2; i++) {
+    top.append("_");
+    bottom.append("-");
+  }
+  vector<string> bubble = {
+    top,
+    mid,
+    bottom,
+  }; 
+  return bubble;
+}
+
 string getStdoutFromCommand(string cmd) {
     string data;
     FILE *stream;
@@ -105,6 +129,12 @@ string getStdoutFromCommand(string cmd) {
     return data;
 }
 
+time_t getTime() {
+    auto start = chrono::system_clock::now();
+    time_t time = std::chrono::system_clock::to_time_t(start);
+    return time;
+}
+
 string getPackageCount(char *distro) {
   //string pack = 0;
     namespace fs = filesystem;
@@ -112,22 +142,7 @@ string getPackageCount(char *distro) {
     if (fs::exists(f)) {
       return getStdoutFromCommand("pacman -Q | wc -l");
     }
-    return "Error";
-    
-    // return "Error, please create an issue, which includes yout distrobution";
-}
-
-
-// penguin ascii art
-vector<std::string> getLinuxLogo() {
-    return {
-        "           __      ",
-        "             -=(o '.    ",
-        "                '.-.\\   ",
-        "                /|  \\  ",
-        "                '|  ||  ",
-        "       snd       _\\_):,_",
-    };
+    return "Error, please create an issue, which includes yout distrobution";
 }
 
 utsname getDistro() {
@@ -144,23 +159,6 @@ string getUptime() {
     int upMinutes = (up - upHours) * 60;
     return to_string(upHours).append(" hours, ")
            .append(to_string(upMinutes).append(" minutes"));
-}
-
-vector<std::string> getBubble(std::string user, std::string os) {
-  string mid = "< ";
-  mid.append(user.append("@").append(os).append(" >"));
-  string top = " ";
-  string bottom = " ";
-  for(int i = 0; i < mid.length() - 2; i++) {
-    top.append("_");
-    bottom.append("-");
-  }
-  vector<std::string> bubble = {
-    top,
-    mid,
-    bottom,
-  }; 
-  return bubble;
 }
 
 int main() {
