@@ -1,5 +1,8 @@
+#include <boost/algorithm/string/trim.hpp>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
+#include <stdlib.h>
 #include <ios>
 #include <iostream>
 #include <chrono>
@@ -17,14 +20,17 @@
 #include <vector>
 #include <cctype>
 #include <unistd.h>
+#include <filesystem>
 
-std::time_t getTime() {
-    auto start = std::chrono::system_clock::now();
-    std::time_t time = std::chrono::system_clock::to_time_t(start);
+using namespace std;
+
+time_t getTime() {
+    auto start = chrono::system_clock::now();
+    time_t time = std::chrono::system_clock::to_time_t(start);
     return time;
 }
 
-std::string getUser() {
+string getUser() {
     #ifdef _WIN32
     #include<windows.h>
     char username[UNLEN+1];
@@ -40,7 +46,7 @@ std::string getUser() {
     return 0;
 }
 
-std::string getOsName()
+string getOsName()
 {
     #ifdef _WIN32
     return "Windows 32-bit";
@@ -60,8 +66,8 @@ std::string getOsName()
 }
 
 // Ascii Art of hippo
-std::vector<std::string> getHippo() {
-    std::vector<std::string> s;
+vector<std::string> getHippo() {
+    vector<std::string> s;
     s= {
         "   \\     ,_,                ",
         "    \\   (0_0)_----------_   ",
@@ -82,18 +88,38 @@ std::vector<std::string> getHippo() {
     return s;
 }
 
-std::string getPackageCount(char* distro) {
+string getStdoutFromCommand(string cmd) {
+    string data;
+    FILE *stream;
+    const int max_buffer = 256;
+    char buffer[max_buffer];
+    cmd.append(" 2>&1");
 
-    if (strcmp(distro, "archlinux") == 0) {
-      return std::to_string(system("pacman -Q | wc -l"));
-    } else {
-      std::cout << "no";
+    stream = popen(cmd.c_str(), "r");
+    if (stream) {
+      while (!feof(stream))
+        if (fgets(buffer, max_buffer, stream) != NULL)
+          data.append(buffer);
+      pclose(stream);
     }
-    return " ";
+    return data;
 }
 
+string getPackageCount(char *distro) {
+  //string pack = 0;
+    namespace fs = filesystem;
+    fs::path f{"/etc/arch-release"};
+    if (fs::exists(f)) {
+      return getStdoutFromCommand("pacman -Q | wc -l");
+    }
+    return "Error";
+    
+    // return "Error, please create an issue, which includes yout distrobution";
+}
+
+
 // penguin ascii art
-std::vector<std::string> getLinuxLogo() {
+vector<std::string> getLinuxLogo() {
     return {
         "           __      ",
         "             -=(o '.    ",
@@ -110,26 +136,26 @@ utsname getDistro() {
    return result; 
 }
 
-std::string getUptime() {
+string getUptime() {
     struct sysinfo info;
     sysinfo(&info);
     double up = info.uptime / 3600.0;
-    int upHours = std::floor(info.uptime / 3600);
+    int upHours = floor(info.uptime / 3600);
     int upMinutes = (up - upHours) * 60;
-    return std::to_string(upHours).append(" hours, ")
-           .append(std::to_string(upMinutes).append(" minutes"));
+    return to_string(upHours).append(" hours, ")
+           .append(to_string(upMinutes).append(" minutes"));
 }
 
-std::vector<std::string> getBubble(std::string user, std::string os) {
-  std::string mid = "< ";
+vector<std::string> getBubble(std::string user, std::string os) {
+  string mid = "< ";
   mid.append(user.append("@").append(os).append(" >"));
-  std::string top = " ";
-  std::string bottom = " ";
+  string top = " ";
+  string bottom = " ";
   for(int i = 0; i < mid.length() - 2; i++) {
     top.append("_");
     bottom.append("-");
   }
-  std::vector<std::string> bubble = {
+  vector<std::string> bubble = {
     top,
     mid,
     bottom,
@@ -138,40 +164,45 @@ std::vector<std::string> getBubble(std::string user, std::string os) {
 }
 
 int main() {
-    std::time_t time = getTime();
-    std::cout << std::ctime(&time);
-    utsname u; 
+    time_t time = getTime();
+    cout << std::ctime(&time);
+    utsname u;
     u = getDistro();
+    string infoArr[4];
 
-    //testing
-    getPackageCount(u.nodename);
-    std::string infoArr[4];
+    string packageCount = getPackageCount(u.nodename);
+    std::stringstream trimmer;
+    trimmer << packageCount;
+    packageCount.clear();
+    trimmer >> packageCount;
     infoArr[0] = "OS: ";
     infoArr[0].append(u.nodename).append(" ").append(u.machine);
     infoArr[1] = "Kernel: ";
     infoArr[1].append(u.release);
-    infoArr[2] = "User: ";
-    infoArr[2].append(getUser());
+    infoArr[2] = "Packages: ";
+    infoArr[2].append(packageCount);
     infoArr[3] = "Uptime: ";
     infoArr[3].append(getUptime());
 
-    std::vector<std::string> bubble = getBubble(getUser(), u.nodename);
+    vector<std::string> bubble = getBubble(getUser(), u.nodename);
     int c = 0;
-    for(std::string s : bubble) {
+    for(string s : bubble) {
       for(char c : s) {
-	std::cout << c ;
+	cout << c ;
       }
-      std::cout << "\n";
+      cout << "\n";
     }
+
     int counter = 0;
-    std::vector<std::string> logo = getHippo();
-    for(std::string s : logo) {
+    vector<std::string> logo = getHippo();
+    for(string s : logo) {
         for(char c : s) {
-            std::cout << c;
+            cout << c;
         }
-        std::string info = ((counter < end(infoArr) - begin(infoArr)
+        string info = ((counter <
+			end(infoArr) - begin(infoArr)
                             ? infoArr[counter] : ""));
-        std::cout << "      "
+        cout << "      "
                   << info
                   << "\n";
         counter++;
