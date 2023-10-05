@@ -1,7 +1,7 @@
 # Hippo fetch
 System Fetch in C++
 
-![alt text](https://github.com/w8ste/Hippofetch/blob/main/terminal_grey.png?raw=true)
+![alt text](https://github.com/w8ste/Hippofetch/blob/main/.images/terminal_grey.png)
 
 
 ### Supported Package Managers
