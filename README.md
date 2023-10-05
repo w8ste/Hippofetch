@@ -14,4 +14,4 @@ This is need for the package count.
 
 ### Appendix
 This project finds was inspired by ![Neofetch](https://github.com/dylanaraps/neofetch) and ![Cowsay](https://github.com/cowsay-org/cowsay).
-I got the art from ![here](https://ascii.co.uk/art/hippo)
+I got the art from [here](https://ascii.co.uk/art/hippo)
