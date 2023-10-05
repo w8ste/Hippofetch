@@ -1,4 +1,3 @@
-#include <boost/algorithm/string/trim.hpp>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -23,7 +22,6 @@
 #include <filesystem>
 
 using namespace std;
-
 
 string getUser() {
     #ifdef _WIN32
