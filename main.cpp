@@ -110,19 +110,21 @@ vector<string> getBubble(string user, string os) {
   return bubble;
 }
 
-string getStdoutFromCommand(string cmd) {
-    string data;
-    FILE *stream;
-    const int max_buffer = 256;
-    char buffer[max_buffer];
+string runCommand(string cmd) {
     cmd.append(" 2>&1");
 
-    stream = popen(cmd.c_str(), "r");
-    if (stream) {
-      while (!feof(stream))
-        if (fgets(buffer, max_buffer, stream) != NULL)
+    FILE *file;
+    const int max = 256;
+    char buffer[max];
+
+    string data;
+
+    file = popen(cmd.c_str(), "r");
+    if (file) {
+      while (!feof(file))
+        if (fgets(buffer, max, file) != NULL)
           data.append(buffer);
-      pclose(stream);
+      pclose(file);
     }
     return data;
 }
@@ -136,11 +138,34 @@ time_t getTime() {
 string getPackageCount(char *distro) {
   //string pack = 0;
     namespace fs = filesystem;
-    fs::path f{"/etc/arch-release"};
-    if (fs::exists(f)) {
-      return getStdoutFromCommand("pacman -Q | wc -l");
+    fs::path arch{"/etc/arch-release"};
+    if (fs::exists(arch)) {
+      return runCommand("pacman -Q | wc -l");
     }
-    return "Error, please create an issue, which includes yout distrobution";
+    fs::path deb{"/etc/debian_version"};
+    if (fs::exists(deb)) {
+      return runCommand("apt list --installed | wc -l");
+    }
+    fs::path red{"/etc/redhat-release"};
+    if (fs::exists(red)) {
+      return runCommand("yum list | wc -l");
+    }
+    fs::path gent{"/etc/gentoo-release"};
+    if (fs::exists(gent)) {
+      return runCommand("equery list \"*\" | wc -l");
+    }
+    fs::path alp{"/etc/alp-release"};
+    if (fs::exists(alp)) {
+      return runCommand("apk info | wc -l");
+    }
+    fs::path sus{"/etc/SuSE-release"};
+    if (fs::exists(sus)) {
+      return runCommand("zypper se -i -t package | wc -l");
+    }
+
+    
+
+    return "Error, please create an issue, which includes your distrobution";
 }
 
 utsname getDistro() {
