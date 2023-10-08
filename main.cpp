@@ -189,8 +189,7 @@ int main() {
     cout << std::ctime(&time);
     utsname u;
     u = getDistro();
-    string infoArr[4];
-
+    string infoArr[5];
     string packageCount = getPackageCount(u.nodename);
     std::stringstream trimmer;
     trimmer << packageCount;
@@ -204,6 +203,9 @@ int main() {
     infoArr[2].append(packageCount);
     infoArr[3] = "Uptime: ";
     infoArr[3].append(getUptime());
+    infoArr[4] = "Shell: ";
+    string s = runCommand("echo $SHELL");
+    infoArr[4].append(s.substr(s.size() - 5));
 
     vector<std::string> bubble = getBubble(getUser(), u.nodename);
     int c = 0;
